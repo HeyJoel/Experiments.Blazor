@@ -1,0 +1,115 @@
+﻿@page "/register"
+@using System.ComponentModel.DataAnnotations
+@inject MemberState MemberState
+@inject IDomainRepository DomainRepository
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+<PageTitle>Register | SPA Cats</PageTitle>
+
+<ContentPanel>
+    <h1>Register</h1>
+
+    @if (isRegistrationComplete)
+    {
+        <div>
+            <p>Thank you for registering with SPA Cats! You now have access to extra features, such as favouriting the cats you love the most.</p>
+            <p>Enjoy!</p>
+            <p><a href="/">View the cats</a></p>
+        </div>
+    }
+    else
+    {
+        <EditForm EditContext="editContext" OnValidSubmit="OnFormSubmit" FormName="register">
+            <DataAnnotationsValidator />
+
+            <FormGroup Title="Name" Id="inputName">
+                <InputText
+                    class="form-control"
+                    id="inputName"
+                    placeholder="Name"
+                    @bind-Value="Command.DisplayName" />
+            </FormGroup>
+
+            <FormGroup Title="Email address" Id="inputEmail">
+                <InputText
+                    type="email"
+                    class="form-control"
+                    id="inputEmail"
+                    placeholder="Email"
+                    @bind-Value="Command.Email" />
+            </FormGroup>
+
+            <FormGroup Title="Password" Id="inputPassword">
+                <InputText
+                    type="password"
+                    class="form-control"
+                    id="inputPassword"
+                    placeholder="Password"
+                    @bind-Value="Command.Password" />
+            </FormGroup>
+
+            <ValidationSummary />
+
+            <FormActions>
+                <SubmitButton>Register</SubmitButton>
+            </FormActions>
+        </EditForm>
+    }
+</ContentPanel>
+
+@code {
+    private bool isRegistrationComplete;
+
+    [SupplyParameterFromForm]
+    public RegisterMemberAndSignInCommand Command { get; set; } = null!;
+
+    private EditContext editContext = null!;
+    private ValidationMessageStore validationMessages = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Command ??= new();
+        editContext = new(Command);
+        validationMessages = new(editContext);
+
+        await MemberState.EnsureLoadedAsync();
+        if (MemberState.Member != null)
+        {
+            NavigationManager.NavigateTo(string.Empty);
+        }
+
+        // editContext.OnFieldChanged += HandleFieldChanged;
+    }
+
+    // void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+    // {
+    //     validationMessages.Clear(e.FieldIdentifier);
+    //     validationMessages.Clear(new FieldIdentifier(Command, string.Empty));
+    // }
+
+    async Task OnFormSubmit()
+    {
+        try
+        {
+            await DomainRepository.ExecuteCommandAsync(Command);
+        }
+        catch (ValidationException ex)
+        {
+            var memberName = ex.ValidationResult.MemberNames.FirstOrDefault() ?? string.Empty;
+            var field = editContext.Field(memberName);
+            validationMessages.Add(field, ex.Message);
+            editContext.Validate();
+            StateHasChanged();
+            return;
+        }
+        await MemberState.ReloadAsync();
+        isRegistrationComplete = true;
+    }
+
+    public void Dispose()
+    {
+        if (editContext is null) return;
+        // editContext.OnFieldChanged -= HandleFieldChanged;
+    }
+}

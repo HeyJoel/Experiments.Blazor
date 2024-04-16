@@ -1,0 +1,110 @@
+﻿@page "/cat/{CatId:int}"
+@inject CatsApi CatsApi
+@inject MemberState MemberState
+<PageTitle>Cat | SPA Cats</PageTitle>
+
+<ContentPanel>
+    <Loader IsLoading="isLoading">
+        @if (cat != null)
+        {
+            <div class="heading">
+                <h1 class="title">@cat.Name</h1>
+                <LikesCounter NumLikes="cat.TotalLikes" class="num-likes" />
+            </div>
+
+            <dl class="info">
+                @if (cat.Breed is not null)
+                {
+                    <dt>Breed:</dt>
+                    <dd>@cat.Breed?.Title</dd>
+                }
+
+                <dt>Characteristics:</dt>
+                <dd>@FormatCharacteristics()</dd>
+                <dt>Description:</dt>
+                <dd>@cat.Description</dd>
+            </dl>
+
+            @if (MemberState.Member != null)
+            {
+                <div class="actions">
+                    @if (isLiked)
+                    {
+                        <button class="btn-love" @onclick="OnLikeClick">Un-like</button>
+                    }
+                    else
+                    {
+                        <button class="btn-love" @onclick="OnLikeClick">Like</button>
+                    }
+                </div>
+            }
+
+            <div class="cat-images">
+                @foreach (var image in cat.Images)
+                {
+                    <ImageAsset Image="image" Width="640" Height="480" />
+                }
+            </div>
+        }
+        else
+        {
+            <p>
+                Cat not found!
+            </p>
+        }
+    </Loader>
+    </ContentPanel>
+
+@code {
+    bool isLoading = true;
+    bool isLiked;
+
+    private CatDetails? cat { get; set; }
+
+    [Parameter]
+    public int CatId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        cat = await CatsApi.GetByIdAsync(CatId);
+
+        isLoading = false;
+        MemberState.OnLikesChange += OnMemberLikesChanged;
+
+        OnMemberLikesChanged();
+    }
+
+    private void OnMemberLikesChanged()
+    {
+        if (cat is not null)
+        {
+            isLiked = MemberState.IsLiked(cat.CatId);
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task OnLikeClick()
+    {
+        if (cat == null)
+        {
+            throw new InvalidOperationException($"Cannot trigger {nameof(OnLikeClick)} when {nameof(cat)} is null.");
+        }
+
+        var likeModifier = isLiked ? -1 : 1;
+
+        await CatsApi.SetLikedAsync(cat.CatId, !isLiked);
+        isLiked = !isLiked;
+        cat.TotalLikes += likeModifier;
+    }
+
+    private string FormatCharacteristics()
+    {
+        if (cat == null)
+        {
+            return string.Empty;
+        }
+
+        return string.Join(", ", cat.Features.Select(f => f.Title));
+    }
+}

@@ -1,0 +1,15 @@
+﻿@if (Result != null)
+{
+    <div class="grid">
+        @foreach (var cat in Result.Items)
+        {
+            <CatGridItem Cat="cat" />
+        }
+    </div>
+}
+@code {
+
+    [Parameter]
+    public PagedQueryResult<CatSummary>? Result { get; set; }
+}
+

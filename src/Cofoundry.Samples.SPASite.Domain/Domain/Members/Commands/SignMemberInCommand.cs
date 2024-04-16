@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Newtonsoft.Json;
 
-namespace Cofoundry.Samples.SPASite;
+namespace Cofoundry.Samples.SPASite.Domain;
 
 public class SignMemberInCommand : ICommand
 {

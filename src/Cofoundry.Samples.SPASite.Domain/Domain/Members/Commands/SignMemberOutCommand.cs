@@ -1,4 +1,4 @@
-﻿namespace Cofoundry.Samples.SPASite;
+namespace Cofoundry.Samples.SPASite.Domain;
 
 public class SignMemberOutCommand : ICommand
 {

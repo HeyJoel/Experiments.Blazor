@@ -9,7 +9,7 @@ builder.Services.AddSpaStaticFiles(configuration =>
 });
 
 builder.Services
-    .AddControllersWithViews()
+    .AddMvc()
     .AddCofoundry(builder.Configuration);
 
 var app = builder.Build();

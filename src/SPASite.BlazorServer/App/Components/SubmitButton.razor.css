@@ -1,0 +1,21 @@
+.btn {
+    background-color: var(--color-secondary);
+    color: white;
+    padding: 0.6rem 4rem;
+    border: none;
+    border-radius: 30px;
+    transition: background-color 0.2s ease-out;
+    width: 100%;
+    cursor: pointer;
+}
+
+.btn:hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+@media (min-width: 768px) {
+    .btn {
+        width: unset;
+    }
+}

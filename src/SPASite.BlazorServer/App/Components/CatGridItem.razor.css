@@ -1,0 +1,50 @@
+.cat {
+    background-color: #fff;
+    border-radius: 3px;
+    text-decoration: none;
+}
+
+.cat:hover .name {
+    color: var(--color-secondary);
+}
+
+.image {
+    width: 100%;
+    padding-bottom: 100%;
+    overflow: hidden;
+    position: relative;
+    border-radius: 3px 3px 0 0;
+}
+
+::deep img {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: auto;
+    height: 100%;
+    transform: translate(-50%, -50%);
+    transform-origin: 50% 50%;
+    transition: transform 1s linear;
+}
+
+::deep :hover img {
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+.details {
+    padding: 1rem;
+    display: flex;
+}
+
+.details .name {
+    color: var(--color-text);
+    font-weight: bold;
+    font-size: 1.125rem;
+    flex-grow: 1;
+}
+
+@media (min-width: 768px) {
+    .details .name {
+        display: inline-block;
+    }
+}

@@ -1,0 +1,93 @@
+.heading {
+    display: block;
+}
+
+@media (min-width: 768px)
+{
+    .heading {
+        display: flex;
+    }
+}
+
+.title {
+    margin: 0;
+    flex-grow: 1;
+    font-size: 1.6rem;
+}
+
+@media (min-width: 768px) {
+    .title {
+        font-size: 2rem;
+    }
+}
+
+::deep .num-likes {
+    font-size: 1.6rem;
+}
+
+@media (min-width: 768px) {
+    .num-likes {
+        font-size: 2rem;
+    }
+}
+
+.info dt
+{
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+.info dd {
+    margin: 0;
+}
+
+.cat-images {
+    display: flex;
+    flex-direction: column;
+}
+
+.cat-images ::deep img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 1rem;
+}
+
+@media (min-width: 768px)
+{
+    .cat-images {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-auto-rows: minmax(150px, auto);
+        grid-gap: 2rem;
+    }
+
+    .cat-images ::deep img {
+        margin-bottom: 0;
+    }
+}
+
+.actions {
+    margin: 2rem 0;
+}
+
+.btn-love {
+    background-color: var(--color-secondary);
+    color: white;
+    padding: 0.6rem 4rem;
+    border: none;
+    border-radius: 30px;
+    transition: background-color 0.2s ease-out;
+    width: 100%;
+    cursor: pointer;
+
+}
+.btn-love:hover {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+@media (min-width: 768px) {
+    .btn-love {
+        width: unset;
+    }
+}

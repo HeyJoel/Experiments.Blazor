@@ -1,0 +1,107 @@
+﻿@page "/login"
+@using System.ComponentModel.DataAnnotations
+@inject MemberState MemberState
+@inject MembersApi MembersApi
+@inject NavigationManager NavigationManager
+@implements IDisposable
+
+<PageTitle>Login | SPA Cats</PageTitle>
+
+<ContentPanel>
+    <h1>Login</h1>
+
+    @if (isLoginComplete)
+    {
+        <div class="message">
+            <p>Login successful!</p>
+            <p><a href="/">View the cats</a></p>
+        </div>
+    }
+    else
+    {
+        <EditForm EditContext="editContext" OnValidSubmit="OnFormSubmit" FormName="regiloginster">
+            <DataAnnotationsValidator />
+
+            <FormGroup Title="Email" Id="inputEmail">
+                <InputText type="email"
+                       class="form-control"
+                       id="inputEmail"
+                       placeholder="Email"
+                       @bind-Value="Command.Email"/>
+            </FormGroup>
+
+            <FormGroup Title="Password" Id="inputPassword">
+                <InputText type="password"
+                       class="form-control"
+                       id="inputPassword"
+                       placeholder="Password"
+                       @bind-Value="Command.Password"/>
+            </FormGroup>
+
+            <ValidationSummary />
+
+            <FormActions>
+                <SubmitButton>Login</SubmitButton>
+            </FormActions>
+        </EditForm>
+    }
+</ContentPanel>
+
+@code {
+    private bool isLoginComplete;
+
+    [SupplyParameterFromForm]
+    public SignMemberInCommand Command { get; set; } = null!;
+
+    private EditContext editContext = null!;
+    private ValidationMessageStore validationMessages = null!;
+
+    protected override void OnInitialized()
+    {
+        Command ??= new();
+        editContext = new(Command);
+        validationMessages = new(editContext);
+
+        if (MemberState.Member != null)
+        {
+            NavigationManager.NavigateTo(string.Empty);
+        }
+
+        editContext.OnFieldChanged += HandleFieldChanged;
+    }
+
+    void HandleFieldChanged(object? sender, FieldChangedEventArgs e)
+    {
+        validationMessages.Clear();
+    }
+
+    async Task OnFormSubmit()
+    {
+        var result = await MembersApi.SignInAsync(Command);
+
+        if (!result.IsValid)
+        {
+            foreach (var error in result.Errors)
+            {
+                var memberName = error.Properties.FirstOrDefault() ?? string.Empty;
+                var field = editContext.Field(memberName);
+                validationMessages.Add(field, error.Message);
+            }
+            editContext.Validate();
+            StateHasChanged();
+            return;
+        }
+
+        await MemberState.ReloadAsync();
+        isLoginComplete = true;
+    }
+
+    public void Dispose()
+    {
+        if (editContext is null)
+        {
+            return;
+        }
+        editContext.OnFieldChanged -= HandleFieldChanged;
+    }
+}

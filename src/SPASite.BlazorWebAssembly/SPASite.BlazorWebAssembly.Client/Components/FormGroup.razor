@@ -1,0 +1,15 @@
+﻿<div class="form-group">
+    <label for="@Id">@Title</label>
+    @ChildContent
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public required string Id { get; set; }
+
+    [Parameter, EditorRequired]
+    public required string Title { get; set; }
+
+    [Parameter, EditorRequired]
+    public required RenderFragment ChildContent { get; set; }
+}

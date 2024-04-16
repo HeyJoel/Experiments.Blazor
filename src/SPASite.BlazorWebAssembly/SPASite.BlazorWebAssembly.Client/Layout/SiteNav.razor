@@ -1,0 +1,59 @@
+﻿@inject MemberState MemberState
+@inject MembersApi MembersApi
+@implements IDisposable
+
+<nav class="wrapper">
+    <div class="container">
+        <a href="/" class="logo">SPA Cats</a>
+
+        <ul class="menu">
+            <li>
+                <NavLink href="" class="menu-link">Home</NavLink>
+            </li>
+            @if (isLoggedIn)
+            {
+                <li>
+                    <EditForm Model="new(){}" OnSubmit="OnSignOutSubmit" FormName="signout">
+                        <button type="submit" class="menu-link">Logout</button>
+                    </EditForm>
+                </li>
+            }
+            else
+            {
+                <li>
+                    <NavLink href="login" class="menu-link">Login</NavLink>
+                </li>
+                <li>
+                    <NavLink href="register" class="menu-link">Register</NavLink>
+                </li>
+            }
+        </ul>
+    </div>
+</nav>
+
+@code {
+    private bool isLoggedIn;
+
+    protected override void OnInitialized()
+    {
+        MemberState.OnMemberChange += OnMemberChange;
+    }
+
+    private void OnMemberChange()
+    {
+        isLoggedIn = MemberState.Member != null;
+        StateHasChanged();
+    }
+
+    private async Task OnSignOutSubmit()
+    {
+        await MembersApi.SignOutAsync();
+        MemberState.Clear();
+    }
+
+    public void Dispose()
+    {
+        MemberState.OnMemberChange -= OnMemberChange;
+    }
+}
+

@@ -1,0 +1,32 @@
+﻿@page "/"
+@inject CatsApi CatsApi
+<PageTitle>SPA Cats</PageTitle>
+<main>
+    <div class="hero">
+        <div class="logo">
+            <img src="/assets/heart-icon.png" alt="Heart symbol" />
+        </div>
+        <div class="intro">
+            <p>Welcome to SPA Cats, the site where beautiful moggies SPA for your affections. We have some of the smartest, fluffiest kitties battling to become top cat.</p>
+            <p>Register now and you can help your favourite cat in the race to become most loved.</p>
+        </div>
+    </div>
+
+    <div class="cat-grid">
+        <Loader IsLoading="isLoading">
+            <CatGrid Result="searchResult" />
+        </Loader>
+    </div>
+</main>
+
+@code {
+    bool isLoading = true;
+
+    private PagedQueryResult<CatSummary>? searchResult { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        searchResult = await CatsApi.SearchAsync();
+        isLoading = false;
+    }
+}

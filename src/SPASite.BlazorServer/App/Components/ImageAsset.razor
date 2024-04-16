@@ -1,0 +1,22 @@
+﻿@inject ICofoundryHelper Cofoundry
+
+@if (Image != null)
+{
+    <img title="@Image.Title" @attributes="AdditionalAttributes" src="@Cofoundry.Routing.ImageAsset(Image, Width, Height)" />
+}
+
+@code {
+
+    [Parameter]
+    public IImageAssetRenderable? Image { get; set; }
+    
+    [Parameter]
+    public int? Width { get; set; }
+
+    [Parameter]
+    public int? Height { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+}
+

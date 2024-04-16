@@ -44,7 +44,7 @@ public class AuthApiController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<JsonResult> Register([FromBody] RegisterMemberAndLogInCommand command)
+    public async Task<JsonResult> Register([FromBody] RegisterMemberAndSignInCommand command)
     {
         return await _apiResponseHelper.RunCommandAsync(command);
     }

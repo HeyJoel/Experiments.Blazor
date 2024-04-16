@@ -1,0 +1,10 @@
+﻿<span @attributes="AdditionalAttributes" class="likes @AdditionalAttributes?.GetValueOrDefault("class")">@NumLikes</span>
+
+@code {
+    [Parameter]
+    public int NumLikes { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+}
+

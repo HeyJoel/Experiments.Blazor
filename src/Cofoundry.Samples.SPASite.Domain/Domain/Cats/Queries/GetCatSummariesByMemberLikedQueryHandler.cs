@@ -3,7 +3,7 @@ using Cofoundry.Samples.SPASite.Data;
 namespace Cofoundry.Samples.SPASite.Domain;
 
 public class GetCatSummariesByMemberLikedQueryHandler
-    : IQueryHandler<GetCatSummariesByMemberLikedQuery, ICollection<CatSummary>>
+    : IQueryHandler<GetCatSummariesByMemberLikedQuery, IReadOnlyCollection<CatSummary>>
     , ISignedInPermissionCheckHandler
 {
     private readonly IContentRepository _contentRepository;
@@ -18,7 +18,7 @@ public class GetCatSummariesByMemberLikedQueryHandler
         _dbContext = dbContext;
     }
 
-    public async Task<ICollection<CatSummary>> ExecuteAsync(GetCatSummariesByMemberLikedQuery query, IExecutionContext executionContext)
+    public async Task<IReadOnlyCollection<CatSummary>> ExecuteAsync(GetCatSummariesByMemberLikedQuery query, IExecutionContext executionContext)
     {
         var userCatIds = await _dbContext
             .CatLikes
@@ -59,14 +59,14 @@ public class GetCatSummariesByMemberLikedQueryHandler
             .ExecuteAsync();
     }
 
-    private Task<Dictionary<int, int>> GetLikeCounts(IReadOnlyCollection<CustomEntityRenderSummary> customEntities)
+    private async Task<Dictionary<int, int>> GetLikeCounts(IReadOnlyCollection<CustomEntityRenderSummary> customEntities)
     {
         var catIds = customEntities
             .Select(i => i.CustomEntityId)
             .Distinct()
             .ToArray();
 
-        return _dbContext
+        return await _dbContext
             .CatLikeCounts
             .AsNoTracking()
             .Where(c => catIds.Contains(c.CatCustomEntityId))

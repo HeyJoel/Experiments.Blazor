@@ -1,6 +1,6 @@
-﻿namespace Cofoundry.Samples.SPASite.Domain;
+namespace Cofoundry.Samples.SPASite.Domain;
 
-public class GetCatSummariesByMemberLikedQuery : IQuery<ICollection<CatSummary>>
+public class GetCatSummariesByMemberLikedQuery : IQuery<IReadOnlyCollection<CatSummary>>
 {
     public GetCatSummariesByMemberLikedQuery() { }
 

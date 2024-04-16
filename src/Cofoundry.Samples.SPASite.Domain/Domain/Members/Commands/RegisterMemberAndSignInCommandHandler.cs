@@ -7,14 +7,14 @@ namespace Cofoundry.Samples.SPASite.Domain;
 /// into Cofoundry such as saving a new user, sending a notification
 /// and logging them in.
 /// </summary>
-public class RegisterMemberAndLogInCommandHandler
-    : ICommandHandler<RegisterMemberAndLogInCommand>
+public class RegisterMemberAndSignInCommandHandler
+    : ICommandHandler<RegisterMemberAndSignInCommand>
     , IIgnorePermissionCheckHandler
 {
     private readonly IAdvancedContentRepository _contentRepository;
     private readonly IMailService _mailService;
 
-    public RegisterMemberAndLogInCommandHandler(
+    public RegisterMemberAndSignInCommandHandler(
         IAdvancedContentRepository contentRepository,
         IMailService mailService
         )
@@ -23,7 +23,7 @@ public class RegisterMemberAndLogInCommandHandler
         _mailService = mailService;
     }
 
-    public async Task ExecuteAsync(RegisterMemberAndLogInCommand command, IExecutionContext executionContext)
+    public async Task ExecuteAsync(RegisterMemberAndSignInCommand command, IExecutionContext executionContext)
     {
         var addUserCommand = MapAddUserCommand(command);
 
@@ -56,7 +56,7 @@ public class RegisterMemberAndLogInCommandHandler
     /// 
     /// See https://www.owasp.org/index.php/Web_Parameter_Tampering
     /// </summary>
-    private static AddUserCommand MapAddUserCommand(RegisterMemberAndLogInCommand command)
+    private static AddUserCommand MapAddUserCommand(RegisterMemberAndSignInCommand command)
     {
         var addUserCommand = new AddUserCommand()
         {
@@ -73,7 +73,7 @@ public class RegisterMemberAndLogInCommandHandler
     /// <summary>
     /// For more info on sending mail with Cofoundry see https://www.cofoundry.org/docs/framework/mail
     /// </summary>
-    private async Task SendWelcomeNotification(RegisterMemberAndLogInCommand command)
+    private async Task SendWelcomeNotification(RegisterMemberAndSignInCommand command)
     {
         var welcomeEmailTemplate = new NewUserWelcomeMailTemplate
         {

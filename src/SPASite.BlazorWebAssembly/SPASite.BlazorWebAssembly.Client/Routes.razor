@@ -1,0 +1,16 @@
+﻿@inject MemberState MemberState
+<Router AppAssembly="@typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <SPASite.BlazorWebAssembly.Client.Pages.NotFound />
+    </NotFound>
+</Router>
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await MemberState.ReloadAsync();
+    }
+}

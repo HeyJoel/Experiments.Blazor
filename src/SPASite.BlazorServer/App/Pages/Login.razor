@@ -1,0 +1,89 @@
+﻿@page "/login"
+@using System.ComponentModel.DataAnnotations
+@inject MemberState MemberState
+@inject IDomainRepository DomainRepository
+@inject NavigationManager NavigationManager
+
+<PageTitle>Login | SPA Cats</PageTitle>
+
+<ContentPanel>
+    <h1>Login</h1>
+
+    @if (isLoginComplete)
+    {
+        <div class="message">
+            <p>Login successful!</p>
+            <p><a href="/">View the cats</a></p>
+        </div>
+    }
+    else
+    {
+        <EditForm EditContext="editContext" OnValidSubmit="OnFormSubmit" FormName="regiloginster">
+            <DataAnnotationsValidator />
+
+            <FormGroup Title="Email" Id="inputEmail">
+                <InputText type="email"
+                       class="form-control"
+                       id="inputEmail"
+                       placeholder="Email"
+                       @bind-Value="Command.Email"/>
+            </FormGroup>
+
+            <FormGroup Title="Password" Id="inputPassword">
+                <InputText type="password"
+                       class="form-control"
+                       id="inputPassword"
+                       placeholder="Password"
+                       @bind-Value="Command.Password"/>
+            </FormGroup>
+
+            <ValidationSummary />
+
+            <FormActions>
+                <SubmitButton>Login</SubmitButton>
+            </FormActions>
+        </EditForm>
+    }
+</ContentPanel>
+
+@code {
+    private bool isLoginComplete;
+
+    [SupplyParameterFromForm]
+    public SignMemberInCommand Command { get; set; } = null!;
+
+    private EditContext editContext = null!;
+    private ValidationMessageStore validationMessages = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        Command ??= new();
+        editContext = new(Command);
+        validationMessages = new(editContext);
+
+        await MemberState.EnsureLoadedAsync();
+        if (MemberState.Member != null)
+        {
+            NavigationManager.NavigateTo(string.Empty);
+        }
+    }
+
+    async Task OnFormSubmit()
+    {
+        try
+        {
+            await DomainRepository.ExecuteCommandAsync(Command);
+        }
+        catch (ValidationException ex)
+        {
+            var memberName = ex.ValidationResult.MemberNames.FirstOrDefault() ?? string.Empty;
+            var field = editContext.Field(memberName);
+            validationMessages.Add(field, ex.Message);
+            editContext.Validate();
+            StateHasChanged();
+            return;
+        }
+        await MemberState.ReloadAsync();
+        isLoginComplete = true;
+    }
+}

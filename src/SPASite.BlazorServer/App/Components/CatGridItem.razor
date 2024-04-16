@@ -1,0 +1,16 @@
+﻿
+<a href="/cat/@Cat.CatId" class="cat">
+    <div class="image">
+        <ImageAsset Image="@Cat.MainImage" Width="263" Height="263" />
+    </div>
+    <div class="details">
+        <span class="name">@Cat.Name</span>
+        <LikesCounter NumLikes="@Cat.TotalLikes" />
+    </div>
+</a>
+
+@code {
+    [Parameter, EditorRequired]
+    public required CatSummary Cat { get; set; }
+}
+

@@ -1,0 +1,71 @@
+.wrapper {
+    background-color: var(--color-primary);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 2rem;
+}
+
+@media (min-width: 768px) {
+    .container {
+        flex-direction: row;
+        justify-content: space-between;
+        max-width: var(--layout-max-width);
+        margin: 0 auto;
+    }
+}
+
+.menu {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.menu li {
+    display: inline-block;
+}
+
+.menu ::deep .menu-link {
+    display: inline-block;
+    background-color: transparent;
+    border: 0;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    margin: 0.5rem 0;
+    text-decoration: none;
+    cursor: pointer;
+    line-height: 1.5;
+}
+
+.menu ::deep .menu-link:hover {
+    background-color: var(--color-secondary);
+}
+
+@media (min-width: 768px) {
+    .menu ::deep .menu-link {
+        padding: 0 1rem;
+        margin: 0;
+        line-height: 60px;
+    }
+}
+
+.logo {
+    background: url("../assets/spacats-logo.png") no-repeat left top;
+    background-size: cover;
+    display: inline-block;
+    width: 187px;
+    height: 36px;
+    margin-top: 1rem;
+
+    text-indent: -100%;
+    overflow: hidden;
+}
+
+@media (min-width: 768px) {
+    .logo {
+        margin-top: 0;
+    }
+}
