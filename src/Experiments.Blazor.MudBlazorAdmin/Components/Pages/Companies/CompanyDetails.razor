@@ -1,0 +1,89 @@
+﻿@page "/companies/{symbol}"
+
+@if (company != null)
+{
+    <PageTitle>@pageTitle</PageTitle>
+    <SectionContent SectionName="header">
+        @pageTitle
+    </SectionContent>
+
+    <MudForm Class="ma-6">
+        <MudTextField Label="Symbol" @bind-Value="company.Symbol" />
+        <MudTextField Label="Security" @bind-Value="company.Security" />
+        <MudSelect Label="Sector" @bind-Value="company.Sector">
+            @foreach(var sector in sectorOptions)
+            {
+                <MudSelectItem Value="@sector">@sector</MudSelectItem>
+            }
+        </MudSelect>
+        <MudSelect Label="Sub-industry" @bind-Value="company.SubIndustry">
+            @foreach (var subIndustry in subIndustryOptions)
+            {
+                <MudSelectItem Value="@subIndustry">@subIndustry</MudSelectItem>
+            }
+        </MudSelect>
+        <MudTextField Label="Headquarters Location" @bind-Value="company.HeadquartersLocation" />
+        <MudTextField Label="Central Index Key (CIK)" @bind-Value="company.CentralIndexKey" />
+        <MudDatePicker Label="Date Added" @bind-Date="bindableDateAdded" />
+        <MudTextField Label="Year Founded" @bind-Value="company.YearFounded" />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto mt-4">Save</MudButton>
+    </MudForm>
+}
+else
+{
+    <PageTitle>Not Found</PageTitle>
+    <p>
+        TODO: NotFound
+    </p>
+}
+
+@code {
+
+    [Parameter, EditorRequired]
+    public required string Symbol { get; set; }
+
+    private string pageTitle = string.Empty;
+    private Company? company;
+    private IReadOnlyCollection<string> sectorOptions = [];
+    private IReadOnlyCollection<string> subIndustryOptions = [];
+
+    /// <summary>
+    /// Hack to allow date binding. Normally we'd have a proper
+    /// command to bind to that could take care of things like this.
+    /// </summary>
+    private DateTime? bindableDateAdded
+    {
+        get
+        {
+            return company?.DateAdded.ToDateTime(TimeOnly.MinValue);
+        }
+        set
+        {
+            if (company == null || value == null)
+            {
+                return;
+            }
+
+            company.DateAdded = DateOnly.FromDateTime(value.Value);
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        company = CompanyDataSet.GetBySymbol(Symbol);
+        if (company != null)
+        {
+            pageTitle = $"{company.Security} ({company.Symbol})";
+        }
+
+        var companies = CompanyDataSet.GetAll();
+        sectorOptions = companies
+            .Select(c => c.Sector)
+            .Distinct()
+            .ToArray();
+        subIndustryOptions = companies
+            .Select(c => c.SubIndustry)
+            .Distinct()
+            .ToArray();
+    }
+}

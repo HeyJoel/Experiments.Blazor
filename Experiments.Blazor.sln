@@ -17,6 +17,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Original", "Original", "{88
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SPASite", "SPASite", "{C903E50A-F002-4F0C-9B88-90B27FF8AC89}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Experiments.Blazor.MudBlazorAdmin", "src\Experiments.Blazor.MudBlazorAdmin\Experiments.Blazor.MudBlazorAdmin.csproj", "{93F0F7BB-E4C8-4C0F-8D47-F591172E9347}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -43,6 +45,10 @@ Global
 		{A73D2ADE-2644-4E99-92E2-4565D5BE5737}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A73D2ADE-2644-4E99-92E2-4565D5BE5737}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A73D2ADE-2644-4E99-92E2-4565D5BE5737}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93F0F7BB-E4C8-4C0F-8D47-F591172E9347}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93F0F7BB-E4C8-4C0F-8D47-F591172E9347}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93F0F7BB-E4C8-4C0F-8D47-F591172E9347}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93F0F7BB-E4C8-4C0F-8D47-F591172E9347}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

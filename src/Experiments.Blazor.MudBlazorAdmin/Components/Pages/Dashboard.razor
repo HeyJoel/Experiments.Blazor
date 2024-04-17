@@ -1,0 +1,150 @@
+﻿@page "/"
+
+<PageTitle>Dashboard</PageTitle>
+<SectionContent SectionName="header">
+    Dashboard
+</SectionContent>
+
+<MudGrid Class="pa-4">
+    <MudItem xs="6">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h6">Sector breakdown</MudText>
+            @if (sectorData != null)
+            {
+                <MudChart
+                    ChartType="ChartType.Pie"
+                    InputData="sectorData.Values"
+                    InputLabels="sectorData.Labels"
+                    Height="350"
+                    SelectedIndexChanged="OnSelectedSectorChanged"/>
+            }
+            else
+            {
+                <MudProgressCircular Indeterminate="true" />
+            }
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="6">
+        <MudPaper Class="pa-4">
+            @if (subIndustryData != null)
+            {
+                <MudText Typo="Typo.h6">Sector breakdown: @selectedSector </MudText>
+                <MudChart ChartType="ChartType.Pie"
+                    InputData="subIndustryData.Values"
+                    InputLabels="subIndustryData.Labels"
+                    Height="350" />
+            }
+            else
+            {
+                <MudProgressCircular Indeterminate="true" />
+            }
+        </MudPaper>
+    </MudItem>
+
+    <MudItem xs="12">
+        <MudPaper Class="pa-4">
+            <MudText Typo="Typo.h6">Num companies added per year</MudText>
+            @if (companiesAddedByYearData != null)
+            {
+                <MudChart
+                    ChartType="ChartType.Line"
+                    XAxisLabels="companiesAddedByYearData.Labels"
+                    ChartSeries="companiesAddedByYearSeries"
+                    ChartOptions="companiesAddedByYearChartOptions"
+                    Height="350"></MudChart>
+            }
+            else
+            {
+                <MudProgressCircular Indeterminate="true" />
+            }
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+
+    private IReadOnlyCollection<Company> companies = Array.Empty<Company>();
+
+    private ChartSeriesData? sectorData;
+    private ChartSeriesData? subIndustryData;
+    private string? selectedSector;
+
+    private ChartSeriesData? companiesAddedByYearData;
+    private readonly List<ChartSeries> companiesAddedByYearSeries = new();
+    private readonly ChartOptions companiesAddedByYearChartOptions = new();
+
+    protected override void OnInitialized()
+    {
+        companies = CompanyDataSet.GetAll();
+
+        var sectorDataPoints = companies
+            .GroupBy(c => c.Sector)
+            .Select(c => new DataPoint(c.Key, c.Count()))
+            .OrderBy(c => c.Label)
+            .ToArray();
+        sectorData = new(sectorDataPoints);
+
+        OnSelectedSectorChanged(0);
+
+        var companyAddedByYearDataPoints = companies
+            .GroupBy(c => (int)Math.Round(c.DateAdded.Year / 10.0) * 10)
+            .Select(c => new DataPoint(c.Key.ToString(), c.Count()))
+            .OrderBy(c => c.Label)
+            .ToArray();
+        companiesAddedByYearData = new(companyAddedByYearDataPoints);
+
+        companiesAddedByYearChartOptions.YAxisTicks = 20;
+        companiesAddedByYearChartOptions.DisableLegend = true;
+        companiesAddedByYearSeries.Add(new()
+        {
+            Data = companiesAddedByYearData.Values
+        });
+    }
+
+    private void OnSelectedSectorChanged(int selectedSectorIndex)
+    {
+        if (sectorData == null
+            || selectedSectorIndex < 0
+            || selectedSectorIndex >= sectorData.Labels.Length)
+        {
+            selectedSector = null;
+        }
+        else
+        {
+            selectedSector = sectorData.Labels[selectedSectorIndex];
+        }
+
+        LoadSubIndustryData();
+    }
+
+    private void LoadSubIndustryData()
+    {
+        if (selectedSector == null)
+        {
+            subIndustryData = null;
+            return;
+        }
+
+        var subIndustryDataPoints = companies
+            .Where(c => c.Sector == selectedSector)
+            .GroupBy(c => c.SubIndustry)
+            .Select(c => new DataPoint(c.Key, c.Count()))
+            .OrderBy(c => c.Label)
+            .ToArray();
+        subIndustryData = new(subIndustryDataPoints);
+    }
+
+    record DataPoint(string Label, double Value);
+    record ChartSeriesData
+    {
+        public ChartSeriesData(IReadOnlyCollection<DataPoint> data)
+        {
+            Values = data.Select(d => d.Value).ToArray();
+            Labels = data.Select(d => d.Label).ToArray();
+        }
+
+        public string[] Labels { get; init; }
+        public double[] Values { get; init; }
+    };
+}

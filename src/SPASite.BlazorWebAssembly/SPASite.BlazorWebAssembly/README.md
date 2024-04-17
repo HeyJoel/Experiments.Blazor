@@ -1,4 +1,4 @@
-# SPACats WebAssembly
+# SPASite WebAssembly
 
 This project is based on the [Cofoundry SPA example application](https://github.com/cofoundry-cms/Cofoundry.Samples.SPASite), ported from VueJs into Blazor. This variant of the app uses the WebAssembly client-side rendering mode and minimal APIs for data access.
 

@@ -1,4 +1,4 @@
-# SPACats BlazorServer
+# SPASite BlazorServer
 
 This project is based on the [Cofoundry SPA example application](https://github.com/cofoundry-cms/Cofoundry.Samples.SPASite), ported from VueJs into Blazor. This variant of the app uses the interactive server-side rendering render mode and direct sever-side data access.
 
